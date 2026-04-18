@@ -1,9 +1,107 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const API_BASE = "http://localhost:4000/api";
+const LOCAL_API_BASE = "http://localhost:4000/api";
+const PAGES_HOSTNAME = "muazkal.github.io";
+const IS_GITHUB_PAGES =
+  typeof window !== "undefined" && window.location.hostname === PAGES_HOSTNAME;
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || (IS_GITHUB_PAGES ? "" : LOCAL_API_BASE)).replace(/\/$/, "");
 const DIFFICULTY_ORDER = ["Beginner", "Intermediate", "Advanced"];
+const SHOWCASE_SCENARIO_SUMMARY = [
+  {
+    id: "desk-move-lease-loss",
+    difficulty: "Beginner",
+    title: "Desk Move Lease Loss",
+    description: "A workstation loses connectivity after a desk move and falls back to APIPA addressing.",
+    symptoms: [
+      "Browser cannot reach external websites.",
+      "The adapter shows limited connectivity.",
+      "The workstation may have a 169.254.x.x address.",
+      "Public IP tests fail."
+    ],
+    objective: "Restore the workstation to a valid DHCP lease and confirm network access."
+  },
+  {
+    id: "web-browsing-fails-by-name",
+    difficulty: "Beginner",
+    title: "Web Browsing Fails By Name",
+    description: "The PC can reach the network but hostname resolution is failing locally.",
+    symptoms: [
+      "Public IPs respond while domain names do not.",
+      "The workstation has a valid gateway.",
+      "The issue appears limited to name resolution.",
+      "Cloud apps fail by hostname."
+    ],
+    objective: "Restore hostname resolution without changing the healthy IP configuration."
+  },
+  {
+    id: "printer-jobs-stuck-in-queue",
+    difficulty: "Beginner",
+    title: "Printer Jobs Stuck In Queue",
+    description: "The local print spooler is down and print jobs are not processing.",
+    symptoms: [
+      "Jobs remain stuck in queue.",
+      "Other users can print normally.",
+      "Applications appear to send jobs successfully.",
+      "The issue is isolated to one endpoint."
+    ],
+    objective: "Bring the print spooler back online so queued jobs can process."
+  },
+  {
+    id: "remote-user-cant-open-intranet",
+    difficulty: "Intermediate",
+    title: "Remote User Can't Open Intranet",
+    description: "A remote user can browse the internet but cannot reach internal company resources.",
+    symptoms: [
+      "Public websites work.",
+      "Internal portals do not load.",
+      "The user is off the corporate network.",
+      "The issue points to secure remote access."
+    ],
+    objective: "Restore access to internal resources by reconnecting the VPN."
+  },
+  {
+    id: "stale-proxy-after-office-move",
+    difficulty: "Advanced",
+    title: "Stale Proxy After Office Move",
+    description: "Web traffic is failing because the workstation is still trying to use an invalid proxy.",
+    symptoms: [
+      "General network connectivity is normal.",
+      "Web requests fail quickly.",
+      "The issue started after network changes.",
+      "Proxy configuration is a likely culprit."
+    ],
+    objective: "Clear the invalid proxy settings and restore direct web access."
+  },
+  {
+    id: "travel-laptop-clock-drift",
+    difficulty: "Advanced",
+    title: "Travel Laptop Clock Drift",
+    description: "Secure services are failing because the workstation clock drifted too far from domain time.",
+    symptoms: [
+      "Authentication behaves inconsistently.",
+      "The workstation is online.",
+      "The issue began after travel or sleep.",
+      "Clock drift is suspected."
+    ],
+    objective: "Resynchronize the workstation clock so time-sensitive services recover."
+  }
+];
+const SHOWCASE_COUNTS = {
+  total: 75,
+  beginner: 25,
+  intermediate: 25,
+  advanced: 25
+};
 
 async function request(path, options = {}) {
+  if (!API_BASE) {
+    const requestError = new Error(
+      "GitHub Pages is serving the frontend preview only. Host the Express API separately and set VITE_API_BASE_URL to enable the live lab."
+    );
+    requestError.status = 503;
+    throw requestError;
+  }
+
   const response = await fetch(`${API_BASE}${path}`, {
     headers: {
       "Content-Type": "application/json"
@@ -42,15 +140,21 @@ function AnimatedTerminalOutput({ output }) {
   return <pre>{lines.slice(0, visibleLineCount).join("\n")}</pre>;
 }
 
-function HomePage({ onEnterLab, scenarios, loading }) {
+function HomePage({ onEnterLab, scenarios, loading, pagesPreview }) {
   const homeScrollRef = useRef(null);
   const trainingOverviewRef = useRef(null);
   const scenarioMapRef = useRef(null);
   const [previewTilt, setPreviewTilt] = useState({ rotateX: 4, rotateY: -10 });
-  const totalScenarios = scenarios.length;
-  const beginnerCount = scenarios.filter((item) => item.difficulty === "Beginner").length;
-  const intermediateCount = scenarios.filter((item) => item.difficulty === "Intermediate").length;
-  const advancedCount = scenarios.filter((item) => item.difficulty === "Advanced").length;
+  const totalScenarios = pagesPreview ? SHOWCASE_COUNTS.total : scenarios.length;
+  const beginnerCount = pagesPreview
+    ? SHOWCASE_COUNTS.beginner
+    : scenarios.filter((item) => item.difficulty === "Beginner").length;
+  const intermediateCount = pagesPreview
+    ? SHOWCASE_COUNTS.intermediate
+    : scenarios.filter((item) => item.difficulty === "Intermediate").length;
+  const advancedCount = pagesPreview
+    ? SHOWCASE_COUNTS.advanced
+    : scenarios.filter((item) => item.difficulty === "Advanced").length;
 
   const scrollToSection = (sectionRef) => {
     if (!homeScrollRef.current || !sectionRef.current) {
@@ -93,14 +197,21 @@ function HomePage({ onEnterLab, scenarios, loading }) {
             <h1 className="hero-title">Practice IT troubleshooting like it is happening live.</h1>
           </div>
           <div className="home-cta-group">
-            <button className="text-nav-button home-random-button" onClick={() => onEnterLab(true)}>
+            <button className="text-nav-button home-random-button" onClick={() => onEnterLab(true)} disabled={pagesPreview}>
               Random Lab
             </button>
-            <button className="launch-button hero-cta" onClick={() => onEnterLab(false)}>
-              Open Lab Console
+            <button className="launch-button hero-cta" onClick={() => onEnterLab(false)} disabled={pagesPreview}>
+              {pagesPreview ? "Lab Needs Backend" : "Open Lab Console"}
             </button>
           </div>
         </header>
+
+        {pagesPreview ? (
+          <div className="info-banner">
+            GitHub Pages is hosting the frontend showcase build. To run live labs, deploy the Express API separately
+            and point `VITE_API_BASE_URL` at it.
+          </div>
+        ) : null}
 
         <main className="home-content">
           <section className="hero-card panel">
@@ -111,10 +222,10 @@ function HomePage({ onEnterLab, scenarios, loading }) {
               broken systems through a terminal-style workflow and fix issues the way a real technician would.
             </p>
             <div className="hero-actions">
-              <button className="launch-button hero-primary" onClick={() => onEnterLab(false)}>
-                Start Practicing
+              <button className="launch-button hero-primary" onClick={() => onEnterLab(false)} disabled={pagesPreview}>
+                {pagesPreview ? "Frontend Preview Only" : "Start Practicing"}
               </button>
-              <button className="text-nav-button home-random-button" type="button" onClick={() => onEnterLab(true)}>
+              <button className="text-nav-button home-random-button" type="button" onClick={() => onEnterLab(true)} disabled={pagesPreview}>
                 Generate Random Lab
               </button>
               <button className="hero-link-button" type="button" onClick={() => scrollToSection(trainingOverviewRef)}>
@@ -250,11 +361,11 @@ function HomePage({ onEnterLab, scenarios, loading }) {
               <h2>Pick a training path and jump into the lab.</h2>
             </div>
             <div className="scenario-overview-actions">
-              <button className="text-nav-button home-random-button" onClick={() => onEnterLab(true)}>
+              <button className="text-nav-button home-random-button" onClick={() => onEnterLab(true)} disabled={pagesPreview}>
                 Random Lab
               </button>
-              <button className="launch-button hero-secondary" onClick={() => onEnterLab(false)}>
-                Go To Labs
+              <button className="launch-button hero-secondary" onClick={() => onEnterLab(false)} disabled={pagesPreview}>
+                {pagesPreview ? "Preview Scenarios" : "Go To Labs"}
               </button>
             </div>
           </div>
@@ -312,6 +423,7 @@ function HomePage({ onEnterLab, scenarios, loading }) {
 }
 
 function App() {
+  const pagesPreview = IS_GITHUB_PAGES && !import.meta.env.VITE_API_BASE_URL;
   const [scenarios, setScenarios] = useState([]);
   const [currentView, setCurrentView] = useState("home");
   const [selectedScenarioId, setSelectedScenarioId] = useState("");
@@ -361,6 +473,16 @@ function App() {
 
   useEffect(() => {
     const loadScenarios = async () => {
+      if (pagesPreview) {
+        setScenarios(SHOWCASE_SCENARIO_SUMMARY);
+        setSelectedScenarioId(SHOWCASE_SCENARIO_SUMMARY[0]?.id ?? "");
+        setError(
+          "GitHub Pages is serving the frontend preview only. Deploy the backend separately and set VITE_API_BASE_URL for live labs."
+        );
+        setLoading(false);
+        return;
+      }
+
       try {
         const data = await request("/scenarios");
         setScenarios(data.scenarios);
@@ -375,7 +497,7 @@ function App() {
     };
 
     loadScenarios();
-  }, []);
+  }, [pagesPreview]);
 
   useEffect(() => {
     terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -418,7 +540,12 @@ function App() {
   };
 
   const startScenario = async (scenarioIdOverride = selectedScenarioId) => {
-    if (!scenarioIdOverride) {
+    if (!scenarioIdOverride || pagesPreview) {
+      if (pagesPreview) {
+        setError(
+          "This GitHub Pages deployment is a frontend-only preview. Host the Express API and set VITE_API_BASE_URL to enable lab sessions."
+        );
+      }
       return;
     }
 
@@ -639,7 +766,7 @@ function App() {
   })).filter((group) => group.items.length > 0);
 
   if (currentView === "home") {
-    return <HomePage onEnterLab={enterLabView} scenarios={scenarios} loading={loading} />;
+    return <HomePage onEnterLab={enterLabView} scenarios={scenarios} loading={loading} pagesPreview={pagesPreview} />;
   }
 
   return (
@@ -653,15 +780,15 @@ function App() {
           <button className="text-nav-button" onClick={() => setCurrentView("home")}>
             Home
           </button>
-          <button className="text-nav-button" onClick={launchRandomScenario} disabled={submitting || !scenarios.length}>
+          <button className="text-nav-button" onClick={launchRandomScenario} disabled={pagesPreview || submitting || !scenarios.length}>
             Random Scenario
           </button>
           <button
             className={`launch-button ${launchCueActive ? "launch-button-cue" : ""}`}
             onClick={() => startScenario()}
-            disabled={!selectedScenarioId || submitting || Boolean(pendingSwitchScenarioId)}
+            disabled={pagesPreview || !selectedScenarioId || submitting || Boolean(pendingSwitchScenarioId)}
           >
-            {sessionId ? "Restart Scenario" : "Launch Scenario"}
+            {pagesPreview ? "Backend Required" : sessionId ? "Restart Scenario" : "Launch Scenario"}
           </button>
         </div>
       </header>

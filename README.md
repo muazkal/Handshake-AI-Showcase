@@ -56,6 +56,22 @@ npm run dev
 
 The frontend talks to the backend API at `http://localhost:4000`.
 
+## Publish To GitHub Pages
+
+This repo now includes a GitHub Actions workflow at `.github/workflows/deploy-pages.yml` that deploys the React frontend to GitHub Pages on every push to `main`.
+
+Important limitation:
+
+- GitHub Pages can host the frontend only.
+- The Express simulator API in `server/` does not run on GitHub Pages.
+- The published Pages site will work as a showcase/landing build unless you separately host the backend and set `VITE_API_BASE_URL` during the frontend build.
+
+If you want a live public lab:
+
+1. Deploy the `server/` app to a backend host such as Render, Railway, Fly.io, or another Node host.
+2. Set `VITE_API_BASE_URL` to that deployed API URL when building the frontend.
+3. Keep the frontend deployment on GitHub Pages.
+
 ## Gameplay Flow
 
 1. Launch the scenario.

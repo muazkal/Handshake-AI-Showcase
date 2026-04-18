@@ -847,6 +847,16 @@ pre {
   flex: 0 0 auto;
 }
 
+.info-banner {
+  margin: 0 0 22px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(103, 212, 255, 0.12);
+  border: 1px solid rgba(103, 212, 255, 0.24);
+  color: #d7f6ff;
+  line-height: 1.6;
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;
