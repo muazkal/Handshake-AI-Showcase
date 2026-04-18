@@ -72,6 +72,35 @@ If you want a live public lab:
 2. Set `VITE_API_BASE_URL` to that deployed API URL when building the frontend.
 3. Keep the frontend deployment on GitHub Pages.
 
+## Deploy Both Frontend And Backend In One Place
+
+If you want a free single-platform deployment, this repo is now prepared for Vercel.
+
+Included Vercel setup:
+
+- `vercel.json` builds the frontend from `client/`
+- `api/[...path].js` exposes the Express backend as a Vercel Function
+- `server/src/app.js` lets the backend run both locally and on Vercel
+
+Expected deployment flow:
+
+1. Import this GitHub repository into Vercel.
+2. Keep the project root at the repository root.
+3. Let Vercel use the repo's `vercel.json`.
+4. Deploy.
+
+Hosted behavior on Vercel:
+
+- the frontend is served from the same deployment
+- the backend responds at `/api/*`
+- the frontend automatically uses same-origin `/api` when not running on localhost
+
+Official references:
+
+- [Vercel Hobby plan](https://vercel.com/docs/plans/hobby)
+- [Vercel Functions](https://vercel.com/docs/functions/)
+- [Express on Vercel](https://vercel.com/docs/frameworks/backend/express)
+
 ## Gameplay Flow
 
 1. Launch the scenario.
