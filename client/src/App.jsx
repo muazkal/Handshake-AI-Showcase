@@ -604,7 +604,11 @@ function App() {
     try {
       const data = await request(`/sessions/${sessionId}/command`, {
         method: "POST",
-        body: JSON.stringify({ command: currentCommand })
+        body: JSON.stringify({
+          command: currentCommand,
+          scenarioId: scenario?.id ?? selectedScenarioId,
+          history: commandHistory
+        })
       });
 
       if (data.output === "__CLEAR__") {
