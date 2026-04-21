@@ -35,7 +35,7 @@ app.post("/api/sessions", (req, res) => {
       scenario: session.scenario,
       prompt: session.prompt,
       bootMessage:
-        "DebugIT simulation ready. Investigate the symptoms using standard troubleshooting commands."
+        "TroubleshootIT simulation ready. Investigate the symptoms using standard troubleshooting commands."
     });
   } catch (error) {
     return res.status(404).json({ error: error.message });
@@ -44,11 +44,27 @@ app.post("/api/sessions", (req, res) => {
 
 app.post("/api/sessions/:sessionId/command", (req, res) => {
   const { sessionId } = req.params;
-  const { command } = req.body;
-  const session = sessions.get(sessionId);
+  const { command, scenarioId, history } = req.body;
+  let session = sessions.get(sessionId);
 
   if (!session) {
-    return res.status(404).json({ error: "Session not found" });
+    if (!scenarioId) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    try {
+      session = createSession(scenarioId);
+      if (Array.isArray(history)) {
+        history.forEach((entry) => {
+          if (typeof entry === "string") {
+            processCommand(session, entry);
+          }
+        });
+      }
+      sessions.set(sessionId, session);
+    } catch (error) {
+      return res.status(404).json({ error: error.message });
+    }
   }
 
   const result = processCommand(session, command ?? "");
