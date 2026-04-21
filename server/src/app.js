@@ -35,7 +35,7 @@ app.post("/api/sessions", (req, res) => {
       scenario: session.scenario,
       prompt: session.prompt,
       bootMessage:
-        "DebugIT simulation ready. Investigate the symptoms using standard troubleshooting commands."
+        "TroubleshootIT simulation ready. Investigate the symptoms using standard troubleshooting commands."
     });
   } catch (error) {
     return res.status(404).json({ error: error.message });

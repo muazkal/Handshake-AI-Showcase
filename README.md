@@ -1,6 +1,6 @@
-# DebugIT
+# TroubleshootIT
 
-DebugIT is a full-stack web application that simulates realistic IT troubleshooting scenarios through a browser-based terminal. Instead of acting like a tutor or quiz, the system behaves like a live workstation with a hidden fault that users must diagnose and fix step-by-step.
+TroubleshootIT is a full-stack web application that simulates realistic IT troubleshooting scenarios through a browser-based terminal. Instead of acting like a tutor or quiz, the system behaves like a live workstation with a hidden fault that users must diagnose and fix step-by-step.
 
 ## Included Scenarios
 
@@ -31,7 +31,7 @@ DebugIT is a full-stack web application that simulates realistic IT troubleshoot
 ## Project Structure
 
 ```text
-debugit/
+troubleshootit/
   client/      React + Vite frontend
   server/      Express API + scenario engine
   package.json Root scripts for local development

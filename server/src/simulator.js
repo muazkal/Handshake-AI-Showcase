@@ -184,7 +184,7 @@ function renderWhoAmI() {
 function renderDomainUser(state) {
   return [
     `User name                    ${state.lockedUser}`,
-    "Full Name                    DebugIT Trainee",
+    "Full Name                    TroubleshootIT Trainee",
     "Account active               Yes",
     `Account locked               ${state.accountLocked ? "Yes" : "No"}`,
     "Password last set            4/15/2026 8:11 AM",

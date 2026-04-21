@@ -199,7 +199,7 @@ function HomePage({ onEnterLab, scenarios, loading, pagesPreview }) {
       <div className="home-frame">
         <header className="home-topbar">
           <div>
-            <p className="eyebrow">DebugIT</p>
+            <p className="eyebrow">TroubleshootIT</p>
             <h1 className="hero-title">Practice IT troubleshooting like it is happening live.</h1>
           </div>
           <div className="home-cta-group">
@@ -224,7 +224,7 @@ function HomePage({ onEnterLab, scenarios, loading, pagesPreview }) {
           <div className="hero-copy">
             <span className="hero-kicker">Hands-on Lab Practice</span>
             <p className="hero-lead">
-              DebugIT turns IT support training into an active simulation. Instead of reading solutions, you diagnose
+              TroubleshootIT turns IT support training into an active simulation. Instead of reading solutions, you diagnose
               broken systems through a terminal-style workflow and fix issues the way a real technician would.
             </p>
             <div className="hero-actions">
@@ -291,7 +291,7 @@ function HomePage({ onEnterLab, scenarios, loading, pagesPreview }) {
               <span className="panel-label">Who It Is For</span>
               <h2>Built for aspiring help desk techs, IT students, and anyone training for real support work.</h2>
               <p>
-                DebugIT is designed for hands-on learners who want to practice structured troubleshooting, not memorize
+                TroubleshootIT is designed for hands-on learners who want to practice structured troubleshooting, not memorize
                 multiple-choice answers. It fits CompTIA-style prep, classroom labs, bootcamps, and self-guided
                 practice.
               </p>
@@ -417,7 +417,7 @@ function HomePage({ onEnterLab, scenarios, loading, pagesPreview }) {
               <span className="panel-label">Why It Helps</span>
               <h2>It trains judgment under uncertainty.</h2>
               <p>
-                Real tickets rarely tell you the root cause. DebugIT trains you to move from incomplete symptoms to a
+                Real tickets rarely tell you the root cause. TroubleshootIT trains you to move from incomplete symptoms to a
                 confident diagnosis using evidence from the environment itself.
               </p>
             </article>
@@ -779,7 +779,7 @@ function App() {
     <div className="app-shell">
       <header className="topbar">
         <div>
-          <p className="eyebrow">DebugIT</p>
+          <p className="eyebrow">TroubleshootIT</p>
           <h1>Interactive IT Troubleshooting Simulator</h1>
         </div>
         <div className="topbar-actions">
